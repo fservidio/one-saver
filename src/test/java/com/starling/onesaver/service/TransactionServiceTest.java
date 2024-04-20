@@ -23,6 +23,11 @@ class TransactionServiceTest {
     @Mock
     BankRestClient bankRestClient;
 
+    /**
+     * Given 3 distinct transactions,
+     * When the roundUp method is called,
+     * Then that the round-up method returns the expected potential saving is returned.
+     */
     @Test
     void roundUpThreeTransactions() {
         Mockito.when(bankRestClient.getAmountFromAllTransactions())
@@ -34,6 +39,11 @@ class TransactionServiceTest {
         assertEquals(BigDecimal.valueOf(1.58),transactionService.roundUp());
     }
 
+    /**
+     * Given 5 distinct transactions,
+     * When the roundUp method is called,
+     * Then that the round-up method returns the expected potential saving is returned.
+     */
     @Test
     void roundUpFiveTransactions() {
         Mockito.when(bankRestClient.getAmountFromAllTransactions())
