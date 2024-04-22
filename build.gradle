@@ -12,6 +12,18 @@ tasks.named('test') {
 }
 
 dependencies {
+//    implementation ('org.springframework.boot:spring-boot-starter-oauth2-client'){
+//        exclude group:'org.springframework.boot', module:'spring-boot-starter'
+//        exclude group:'org.springframework.security', module:'spring-security-config'
+//    }
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.security:spring-security-oauth2-client'
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
