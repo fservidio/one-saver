@@ -1,23 +1,27 @@
 package com.starling.onesaver.client;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "client.starling")
+@Validated
 @Getter
 @Setter
 @AllArgsConstructor
 public class ClientProperties {
 
-
+    @NotNull
     String token;
 
     String baseUrl;
