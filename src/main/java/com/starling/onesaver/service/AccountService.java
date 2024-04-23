@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service responsible for getting Account details and Account balance
@@ -50,8 +51,8 @@ public class AccountService {
         AccountV2 account = primaryAccounts.get(0);
 
         //update properties fields
-        assert account.getAccountUid() != null;
-        properties.setAccountUid(account.getAccountUid().toString());
+        Optional.ofNullable(account.getAccountUid()).ifPresent(a->properties.setAccountUid(a.toString()));
+        Optional.ofNullable(account.getDefaultCategory()).ifPresent(a->properties.setCategoryUid(a.toString()));
         assert account.getDefaultCategory() != null;
         properties.setCategoryUid(account.getDefaultCategory().toString());
 
