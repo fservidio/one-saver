@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service responsible for getting Account details and Account balance
@@ -42,10 +41,21 @@ public class AccountService {
 
         assert accounts.getAccounts() != null;
         List<AccountV2> primaryAccounts = accounts.getAccounts().stream()
-                .filter(a -> a.getAccountType().equals(AccountV2.AccountTypeEnum.PRIMARY))
-                .collect(Collectors.toList());
+                .filter(a -> {
+                    assert a.getAccountType() != null;
+                    return a.getAccountType().equals(AccountV2.AccountTypeEnum.PRIMARY);
+                })
+                .toList();
         assert(primaryAccounts.size()==1);
-        return primaryAccounts.get(0);
+        AccountV2 account = primaryAccounts.get(0);
+
+        //update properties fields
+        assert account.getAccountUid() != null;
+        properties.setAccountUid(account.getAccountUid().toString());
+        assert account.getDefaultCategory() != null;
+        properties.setCategoryUid(account.getDefaultCategory().toString());
+
+        return account;
     }
 
     /**
@@ -57,6 +67,7 @@ public class AccountService {
         AccountV2 account = getAccount();
         assert(account!=null);
         // set the params for the transactions service to get the account balance
+        assert account.getAccountUid() != null;
         properties.getParams().get("account-balance").pathParams.put("accountUid", account.getAccountUid().toString());
         ClientProperties.ClientParams clientParams = properties.getParams().get("account-balance");
         BalanceV2 accounts = bankRestClient.retrieveObjects(
@@ -66,6 +77,8 @@ public class AccountService {
                 clientParams.getPathParams(),
                 ParameterizedTypeReference.forType(BalanceV2.class));
         assert(accounts!=null);
+
+        assert accounts.getClearedBalance() != null;
         return accounts.getClearedBalance().getMinorUnits();
     }
 }

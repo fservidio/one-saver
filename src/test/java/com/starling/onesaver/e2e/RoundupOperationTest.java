@@ -1,7 +1,7 @@
 package com.starling.onesaver.e2e;
 
 import com.starling.onesaver.OneSaverApplication;
-import org.assertj.core.api.Assertions;
+import com.starling.onesaver.client.ClientProperties;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -28,6 +29,9 @@ public class RoundupOperationTest {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    ClientProperties properties;
+
     @Test
     public void whenAccountExistsAndSavingGoalExistsThenRoundUpAndSave() throws Exception {
 
@@ -41,11 +45,14 @@ public class RoundupOperationTest {
                 .andReturn().getResponse().getContentAsString();
         Long balance = Long.valueOf(balanceResult);
 
-
+// check values of properties fields
+        assertThat(properties.getCategoryUid()).isNotEmpty();
+        assertThat(properties.getAccountUid()).isNotEmpty();
         //get potential roundup
 
         String roundupResult = mvc.perform(get("/roundup")
-                        .contentType(MediaType.APPLICATION_JSON))
+                    .param("from","2024-04-18")
+                    .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -66,11 +73,14 @@ public class RoundupOperationTest {
         //execute roundup operation
 
         String savingGoalPerformed = mvc.perform(put("/save-roundup")
+                        .param("from","2024-04-18")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse().getContentAsString();
+
+        assertThat(Boolean.valueOf(savingGoalPerformed)).isTrue();
 
         //get the account balance
         String balanceResultAfterTopup = mvc.perform(get("/account-balance")
@@ -83,7 +93,7 @@ public class RoundupOperationTest {
         Long balanceAfterTopup = Long.valueOf(balanceResultAfterTopup);
 
         //verify account balance - roundup
-        Assertions.assertThat(balanceAfterTopup).isEqualTo(balance-roundup);
+        assertThat(balanceAfterTopup).isEqualTo(balance-roundup);
         //verify saving goal balance + roundup
         String savingGoalAfterTopupResult = mvc.perform(get("/savinggoal")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -94,6 +104,6 @@ public class RoundupOperationTest {
                 .andReturn().getResponse().getContentAsString();
         Long savingGoalAfterTopup = Long.valueOf(savingGoalAfterTopupResult);
 
-        Assertions.assertThat(savingGoalAfterTopup).isEqualTo(savingGoalBalance+roundup);
+        assertThat(savingGoalAfterTopup).isEqualTo(savingGoalBalance+roundup);
     }
 }
