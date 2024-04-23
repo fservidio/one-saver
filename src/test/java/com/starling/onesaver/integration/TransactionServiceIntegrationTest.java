@@ -29,7 +29,7 @@ class TransactionServiceIntegrationTest {
 
         TransactionService transactionService = new TransactionService(properties);
         ClientProperties.ClientParams clientParams = properties.getParams().get("transactions");
-        Long roundUp = transactionService.getRoundUpValue(LocalDate.of(2024,4,2));
+        Long roundUp = transactionService.getRoundUpValue(LocalDate.of(2024,4,18));
         assertTrue(roundUp>0);
     }
 
