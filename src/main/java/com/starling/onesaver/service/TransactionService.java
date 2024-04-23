@@ -1,15 +1,20 @@
 package com.starling.onesaver.service;
 
+import com.starling.model.FeedItem;
+import com.starling.model.FeedItems;
 import com.starling.onesaver.client.BankRestClient;
 import com.starling.onesaver.client.ClientProperties;
-import com.starling.onesaver.model.transaction.FeedItems;
+import com.starling.onesaver.util.DateUtil;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * Service class for all the operations related to the transactions (belonging to a specific account)
@@ -21,31 +26,41 @@ public class TransactionService {
     private final ClientProperties properties;
 
     public TransactionService(ClientProperties properties) {
-        this.properties=properties;
+        this.properties = properties;
         this.bankRestClient = new BankRestClient(properties.getBaseUrl());
     }
 
     /**
      * Determines the potential savings from rounding-up all the transactions
-     * @return the total amount of the rounding-up from all the transactions, in BigDecimal.
+     *
+     * @return the total amount of the rounding-up from all the transactions, in minor units.
      */
-    public BigDecimal roundUp(){
+    public Long getRoundUpValue(LocalDate fromDate) {
 
 
-                FeedItems items = bankRestClient
-                .retrieveObjects(properties,"transactions",ParameterizedTypeReference.forType(FeedItems.class));
+        ClientProperties.ClientParams clientParams = properties.getParams().get("transactions");
 
+        String minDateString = DateUtil.convert(fromDate);
+        String maxDateString = DateUtil.convert(fromDate.plusWeeks(1));
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+        queryParams.put("minTransactionTimestamp",List.of(minDateString));
+        queryParams.put("maxTransactionTimestamp", List.of(maxDateString));
 
-        List<BigDecimal> amount =items.getFeedItems().stream()
-                .filter(f -> f.getSource().equals("FASTER_PAYMENTS_OUT"))
-                .map(f -> BigDecimal.valueOf(f.getAmount().getMinorUnits()).divide(BigDecimal.valueOf(100.00)))
-                .collect(Collectors.toList());
+        Map<String, String> pathParams = new LinkedHashMap<>();
+        pathParams.put("accountUid",properties.getAccountUid());
+        pathParams.put("categoryUid",properties.getCategoryUid());
 
-        return amount
-                .stream()
-                .map(i->i.setScale(0, RoundingMode.CEILING).subtract(i))
-                .reduce((x,y)->x.add(y))
-                .get();
+        FeedItems items = bankRestClient
+                .retrieveObjects(
+                        properties.getToken(),
+                        clientParams.getUrlPath(),
+                        queryParams,
+                        pathParams,
+                        ParameterizedTypeReference.forType(FeedItems.class));
+
+        return items.getFeedItems().stream()
+                .filter(f -> f.getSource().equals(FeedItem.SourceEnum.FASTER_PAYMENTS_OUT))
+                .mapToLong(f -> f.getAmount().getMinorUnits()).sum();
 
     }
 }

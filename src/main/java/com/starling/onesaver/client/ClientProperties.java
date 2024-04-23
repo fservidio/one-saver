@@ -3,18 +3,15 @@ package com.starling.onesaver.client;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.util.MultiValueMap;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
+@EnableConfigurationProperties
 @ConfigurationProperties(prefix = "client.starling")
-@Component
 @Getter
 @Setter
 @AllArgsConstructor
@@ -27,6 +24,9 @@ public class ClientProperties {
 
     Map<String,ClientParams> params;
 
+    //TODO the following fields are used to store the values temporarily
+    String accountUid;
+    String categoryUid;
 
     @Getter
     @Setter

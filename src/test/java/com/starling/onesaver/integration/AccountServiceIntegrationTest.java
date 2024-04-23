@@ -1,6 +1,7 @@
-package com.starling.onesaver.service;
+package com.starling.onesaver.integration;
 
 import com.starling.onesaver.client.ClientProperties;
+import com.starling.onesaver.service.AccountService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,24 +9,19 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.math.BigDecimal;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = ClientProperties.class)
-@TestPropertySource("classpath:application-operation.properties")
-class OperationServiceIntegrationTest {
+@TestPropertySource("classpath:application-account.properties")
+
+class AccountServiceIntegrationTest {
 
     @Autowired
     ClientProperties properties;
-    private AccountService accountService;
-    private TransactionService transactionService;
-
     @Test
-    void executeRoundUp() {
-        accountService = new AccountService(properties);
-        transactionService = new TransactionService(properties);
-        OperationService service = new OperationService(properties,accountService,transactionService);
-        service.executeRoundUp();
+    void getAccount() {
+        AccountService accountService = new AccountService(properties);
+        assertNotNull(accountService.getAccount());
     }
-
 }

@@ -1,6 +1,8 @@
-package com.starling.onesaver.service;
+package com.starling.onesaver.integration;
 
+import com.starling.model.SavingsGoalsV2;
 import com.starling.onesaver.client.ClientProperties;
+import com.starling.onesaver.service.SavingGoalService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +14,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = ClientProperties.class)
-@TestPropertySource("classpath:application.properties")
+@TestPropertySource("classpath:application-operation.properties")
 
-class AccountServiceIntegrationTest {
+class SavingGoalServiceIntegrationTest {
 
     @Autowired
     ClientProperties properties;
     @Test
     void getAccount() {
-        AccountService accountService = new AccountService(properties);
-        assertNotNull(accountService.getAccount());
+        SavingGoalService savingGoalService = new SavingGoalService(properties);
+        SavingsGoalsV2 result = savingGoalService.getSavingGoal();
+        assertNotNull(result);
     }
 }
