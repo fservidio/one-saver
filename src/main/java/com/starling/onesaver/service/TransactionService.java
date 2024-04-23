@@ -11,7 +11,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +34,7 @@ public class TransactionService {
      *
      * @return the total amount of the rounding-up from all the transactions, in minor units.
      */
-    public Long getRoundUpValue(LocalDate fromDate) {
-
-
+    public Long getRoundUpValue(String accountUid, String categoryUid, LocalDate fromDate) {
         ClientProperties.ClientParams clientParams = properties.getParams().get("transactions");
 
         String minDateString = DateUtil.convert(fromDate);
@@ -47,8 +44,8 @@ public class TransactionService {
         queryParams.put("maxTransactionTimestamp", List.of(maxDateString));
 
         Map<String, String> pathParams = new LinkedHashMap<>();
-        pathParams.put("accountUid",properties.getAccountUid());
-        pathParams.put("categoryUid",properties.getCategoryUid());
+        pathParams.put("accountUid",accountUid);
+        pathParams.put("categoryUid",categoryUid);
 
         FeedItems items = bankRestClient
                 .retrieveObjects(
@@ -60,7 +57,8 @@ public class TransactionService {
 
         return items.getFeedItems().stream()
                 .filter(f -> f.getSource().equals(FeedItem.SourceEnum.FASTER_PAYMENTS_OUT))
-                .mapToLong(f -> f.getAmount().getMinorUnits()).sum();
+                .mapToLong(f -> ((f.getAmount().getMinorUnits()+99)/100)*100-f.getAmount().getMinorUnits()).sum();
+
 
     }
 }

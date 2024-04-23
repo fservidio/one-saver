@@ -2,6 +2,7 @@ package com.starling.onesaver.integration;
 
 import com.starling.model.SavingsGoalsV2;
 import com.starling.onesaver.client.ClientProperties;
+import com.starling.onesaver.service.AccountService;
 import com.starling.onesaver.service.SavingGoalService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,9 +21,12 @@ class SavingGoalServiceIntegrationTest {
 
     @Autowired
     ClientProperties properties;
+
+    AccountService accountService;
     @Test
     void getAccount() {
-        SavingGoalService savingGoalService = new SavingGoalService(properties);
+        accountService = new AccountService(properties);
+        SavingGoalService savingGoalService = new SavingGoalService(properties,accountService);
         SavingsGoalsV2 result = savingGoalService.getSavingGoal();
         assertNotNull(result);
     }

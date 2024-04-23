@@ -1,8 +1,10 @@
 package com.starling.onesaver.controller;
 
+import com.starling.model.AccountV2;
 import com.starling.onesaver.service.AccountService;
 import com.starling.onesaver.service.TransactionService;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -12,11 +14,13 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,13 +38,27 @@ public class TransactionControllerTest {
     @MockBean
     AccountService accountService;
     @Test
-    void roundUpSuccess() throws Exception {
+    void whenRoundUpMockedThenSuccess() throws Exception {
         LocalDate localDate = LocalDate.of(2002,2,2);
-        when(transactionService.getRoundUpValue(localDate)).thenReturn(158L);
+        AccountV2 account = new AccountV2();
+        UUID accountUid = UUID.randomUUID();
+        account.setAccountUid(accountUid);
+        UUID categoryUid = UUID.randomUUID();
+        account.setDefaultCategory(categoryUid);
+        when(accountService.getAccount()).thenReturn(account);
+        when(transactionService.getRoundUpValue(any(),any(),any())).thenReturn(158L);
         mockMvc.perform(get("/roundup")
                 .param("from","2002-02-02"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("158"));
+        ArgumentCaptor<String> acAccount = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> acCategory = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<LocalDate> acFromDate = ArgumentCaptor.forClass(LocalDate.class);
+        verify(transactionService).getRoundUpValue(acAccount.capture(),acCategory.capture(),acFromDate.capture());
+        assertThat(acFromDate.getValue()).isEqualTo(LocalDate.of(2002,2,2));
+        assertThat(acAccount.getValue()).isEqualTo(accountUid.toString());
+        assertThat(acCategory.getValue()).isEqualTo(categoryUid.toString());
+
     }
     @Test
     void whenMissingFromDateThenReturnsBadRequest() throws Exception {

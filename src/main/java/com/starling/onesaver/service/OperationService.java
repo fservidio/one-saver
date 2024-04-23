@@ -1,7 +1,5 @@
 package com.starling.onesaver.service;
 
-import com.starling.model.AccountV2;
-import com.starling.model.SavingsGoalV2;
 import com.starling.onesaver.client.ClientProperties;
 import org.springframework.stereotype.Service;
 
@@ -32,12 +30,11 @@ public class OperationService {
      * @return true if the transfer was successful
      */
     public Boolean saveRoundUp(LocalDate fromDate){
+        accountService.getAccount();
+        //TODO the account has been retrieved, the accountUid and categoryUid are now available from properties
         //get amount to save
-        Long amount = transactionService.getRoundUpValue(fromDate);
-        // get the account id and the category id
-        AccountV2 account = accountService.getAccount();
-        SavingsGoalV2 savingGoal = savingGoalService.getSavingGoal().getSavingsGoalList().get(0);
+        Long amount = transactionService.getRoundUpValue(properties.getAccountUid(), properties.getCategoryUid(), fromDate);
         //put the roundup value into a saving goal
-        return savingGoalService.putIntoSavingGoal(account.getAccountUid(),savingGoal.getSavingsGoalUid(),amount).getSuccess();
+        return savingGoalService.putIntoSavingGoal(amount).getSuccess();
     }
 }

@@ -1,5 +1,9 @@
 package com.starling.onesaver.e2e;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.starling.model.SavingsGoalV2;
+import com.starling.model.SavingsGoalsV2;
 import com.starling.onesaver.OneSaverApplication;
 import com.starling.onesaver.client.ClientProperties;
 import org.junit.jupiter.api.Test;
@@ -11,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -66,10 +72,9 @@ public class RoundupOperationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content()
-
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse().getContentAsString();
-        Long savingGoalBalance = Long.valueOf(savingGoalResult);
+        Long savingGoalBalance = getSavingGoalBalanceFrom(savingGoalResult);
         //execute roundup operation
 
         String savingGoalPerformed = mvc.perform(put("/save-roundup")
@@ -102,8 +107,27 @@ public class RoundupOperationTest {
 
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse().getContentAsString();
-        Long savingGoalAfterTopup = Long.valueOf(savingGoalAfterTopupResult);
+        Long savingGoalAfterTopup = getSavingGoalBalanceFrom(savingGoalAfterTopupResult);
 
         assertThat(savingGoalAfterTopup).isEqualTo(savingGoalBalance+roundup);
     }
+
+    private Long getSavingGoalBalanceFrom(String savingGoalResult) {
+        try {
+            List<SavingsGoalV2> savingsGoalList = new ObjectMapper().readValue(savingGoalResult, SavingsGoalsV2.class).getSavingsGoalList();
+            return savingsGoalList.get(0).getTotalSaved().getMinorUnits();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Test
+    void whenGetRoundUpIsCalledThenReturnsRoundUpValue() throws Exception {
+        mvc.perform(get("/roundup")
+                        .param("from","2024-04-18"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("518"));
+    }
+
 }

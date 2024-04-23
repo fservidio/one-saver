@@ -1,5 +1,6 @@
 package com.starling.onesaver.controller;
 
+import com.starling.model.SavingsGoalsV2;
 import com.starling.onesaver.service.OperationService;
 import com.starling.onesaver.service.SavingGoalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ public class SavingGoalsController {
 
 
     @GetMapping("/savinggoal")
-    public @ResponseBody Long getSavingGoalBalance(){
-        return savingGoalService.getSavingGoalBalance();
+    public @ResponseBody SavingsGoalsV2 getSavingGoal(){
+        return savingGoalService.getSavingGoal();
     }
 
     @PutMapping("/save-roundup")
