@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class responsible for communicating with the bank API
+ * Class responsible for communicating with the bank API.
  */
 public class BankRestClient {
 
@@ -21,6 +21,16 @@ public class BankRestClient {
 
     }
 
+    /**
+     * Executes GET calls
+     * @param token
+     * @param urlPath
+     * @param queryParam
+     * @param pathParam
+     * @param typeReference
+     * @return
+     * @param <T>
+     */
     public <T> T retrieveObjects(String token, String urlPath, MultiValueMap<String, String> queryParam, Map<String, String> pathParam, ParameterizedTypeReference<T> typeReference){
         return webClient
                 .get()
@@ -39,10 +49,20 @@ public class BankRestClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(typeReference)
-//                .onErrorMap(Exception.class, ex -> new Exception("Generic exception", ex))
                 .block();
     }
 
+    /**
+     * Executes PUT calls
+     * @param token
+     * @param urlPath
+     * @param queryParam
+     * @param pathParam
+     * @param body
+     * @param typeReference
+     * @return
+     * @param <T>
+     */
     public <T> T putObjects(String token, String urlPath, MultiValueMap<String, String> queryParam, Map<String, String> pathParam, Object body, ParameterizedTypeReference<T> typeReference){
         return webClient
                 .put()

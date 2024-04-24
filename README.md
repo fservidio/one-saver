@@ -24,3 +24,17 @@ You can specify the token env. variable as follows:
 ```bash
 http://localhost:8080
 ```
+
+
+## Folder structure
+
+### Top-level directories
+
+    .
+    ├── build                   # Compiled files (alternatively `dist`)
+    ├── docs                    # Documentation files (alternatively `doc`)
+    ├── src                     # Source files (alternatively `lib` or `app`)
+    ├── test                    # Automated tests (alternatively `spec` or `tests`)
+    ├── tools                   # Tools and utilities
+    ├── LICENSE
+    └── README.md

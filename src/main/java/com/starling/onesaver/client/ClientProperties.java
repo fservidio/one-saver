@@ -13,6 +13,10 @@ import org.springframework.validation.annotation.Validated;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Contains and handles the property values for the parameters needed in the WebClient
+ * such as url path, plus it stores the values of accountId and categoryId once fetched from the API
+ */
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "client.starling")
 @Validated

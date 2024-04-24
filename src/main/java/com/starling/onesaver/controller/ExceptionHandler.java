@@ -11,6 +11,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.stream.Collectors;
 
+/**
+ * Intercepts Validation error in requests such as GET roundup value and save roundup value in saving space
+ * when date query param is needed
+ */
 @ControllerAdvice
 public class ExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -25,6 +29,11 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
                 .collect(Collectors.joining(","));
     }
 
+    /**
+     * Handles errors from the webclient and wraps them in a ResponseEntity
+     * @param ex
+     * @return
+     */
     @org.springframework.web.bind.annotation.ExceptionHandler(WebClientResponseException.class)
     protected ResponseEntity handleWebClientResponseException(WebClientResponseException ex) {
 
