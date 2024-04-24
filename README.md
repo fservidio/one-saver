@@ -31,6 +31,7 @@ http://localhost:8080
 ### Top-level directories
     .
     ├── .github/ISSUE_TEMPLATE                  # Contains template specifications for GitHub issues customization
+    ├── docs                                    # Contains the documentation for the API available from the OneSaver application
     ├── gradle/wrapper                          # Contains jar files and gradle properties to run gradle scripts without the need to download and install it in advance
     ├── specs                                   # Contains the OpenAPI specifications for Starling Bank API
     ├── src                                     # Contains the source files
@@ -61,3 +62,5 @@ http://localhost:8080
             │       ├── e2e                     # Contains tests for the entire flow from getting the account details to saving the roundup value
             │       └── integration             # Contains tests that are performed through Starling Bank sandbox APIs
             └── resources                       # Properties files. Store the access token here as specified above.
+
+API specifications available [here](./docs/api.md).
