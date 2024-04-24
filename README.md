@@ -1,6 +1,6 @@
 # One-saver
 
-This repository contains the code for the application developed for the tech interview assignment, developed by Francesco Servidio.
+This repository contains the code for the application developed for the tech interview assignment by Francesco Servidio.
 
 ## Important
 Make sure that a valid token is specified inside the file ``src/main/application.properties``
