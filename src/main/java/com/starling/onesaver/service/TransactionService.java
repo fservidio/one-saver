@@ -5,6 +5,7 @@ import com.starling.model.FeedItems;
 import com.starling.onesaver.client.BankRestClient;
 import com.starling.onesaver.client.ClientProperties;
 import com.starling.onesaver.util.DateUtil;
+import lombok.Setter;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -21,8 +22,9 @@ import java.util.Map;
 @Service
 public class TransactionService {
 
-    private final BankRestClient bankRestClient;
-    private final ClientProperties properties;
+    @Setter
+    private BankRestClient bankRestClient;
+    private ClientProperties properties;
 
     public TransactionService(ClientProperties properties) {
         this.properties = properties;
