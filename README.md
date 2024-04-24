@@ -17,7 +17,7 @@ Java SDK 21
 ```
 You can specify the token env. variable as follows:
 
-```gradle bootRun --args='--client.starling.token=<INSERT_TOKEN_HERE>'```
+```./gradlew bootRun --args='--client.starling.token=<INSERT_TOKEN_HERE>'```
 
 ## Usage
 
