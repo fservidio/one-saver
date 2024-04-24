@@ -54,6 +54,10 @@ The value of the potential savings in minor units.
 | 200         | `OK`          |
 | 400         | `BAD REQUEST` |
 
+### Example
+```bash
+curl -X GET -F from=2024-04-18 http://localhost:8080/roundup 
+```
 
 ## Saving space details
 
