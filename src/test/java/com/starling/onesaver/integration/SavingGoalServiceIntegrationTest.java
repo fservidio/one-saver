@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = ClientProperties.class)
-@TestPropertySource("classpath:application-operation.properties")
+@TestPropertySource("classpath:application.properties")
 
 class SavingGoalServiceIntegrationTest {
 
@@ -24,7 +24,7 @@ class SavingGoalServiceIntegrationTest {
 
     AccountService accountService;
     @Test
-    void getAccount() {
+    void getSavingGoals() {
         accountService = new AccountService(properties);
         SavingGoalService savingGoalService = new SavingGoalService(properties,accountService);
         SavingsGoalsV2 result = savingGoalService.getSavingGoal();

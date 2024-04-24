@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TransactionController.class)
-@TestPropertySource("classpath:application-operation.properties")
+@TestPropertySource("classpath:application.properties")
 @AutoConfigureMockMvc
 public class TransactionControllerTest {
 
@@ -60,7 +60,7 @@ public class TransactionControllerTest {
         ArgumentCaptor<String> acCategory = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<LocalDate> acFromDate = ArgumentCaptor.forClass(LocalDate.class);
         verify(transactionService).getRoundUpValue(acAccount.capture(),acCategory.capture(),acFromDate.capture());
-        assertThat(acFromDate.getValue()).isEqualTo(LocalDate.of(2002,2,2));
+        assertThat(acFromDate.getValue()).isEqualTo(localDate);
         assertThat(acAccount.getValue()).isEqualTo(accountUid.toString());
         assertThat(acCategory.getValue()).isEqualTo(categoryUid.toString());
 

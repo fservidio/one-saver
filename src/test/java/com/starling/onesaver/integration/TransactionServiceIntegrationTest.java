@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = ClientProperties.class)
-@TestPropertySource("classpath:application-operation.properties")
+@TestPropertySource("classpath:application.properties")
 class TransactionServiceIntegrationTest {
 
     @Autowired

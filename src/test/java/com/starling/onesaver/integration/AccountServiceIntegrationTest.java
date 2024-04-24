@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = ClientProperties.class)
-@TestPropertySource("classpath:application-account.properties")
+@TestPropertySource("classpath:application.properties")
 
 class AccountServiceIntegrationTest {
 
