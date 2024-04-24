@@ -21,8 +21,16 @@ import java.util.Map;
 @Service
 public class TransactionService {
 
-    private final BankRestClient bankRestClient;
-    private final ClientProperties properties;
+    private BankRestClient bankRestClient;
+    private ClientProperties properties;
+
+    public TransactionService(BankRestClient bankRestClient, ClientProperties properties) {
+        this.bankRestClient = bankRestClient;
+        this.properties = properties;
+    }
+
+    public TransactionService() {
+    }
 
     public TransactionService(ClientProperties properties) {
         this.properties = properties;
