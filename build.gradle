@@ -54,3 +54,12 @@ sourceSets.main.java.srcDirs += ['build/generated/src/main/java']
 tasks.compileJava {
     dependsOn(tasks.openApiGenerate)
 }
+
+test {
+    filter {
+        //exclude e2e test that are currently run against Starling Bank API
+        //TODO implement Mockserver for this test
+        excludeTestsMatching "com.starling.onesaver.e2e.*"
+
+    }
+}
