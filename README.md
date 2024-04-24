@@ -1,6 +1,6 @@
 # One-saver
 
-This repository contains the code for the application developed for the tech interview assignment.
+This repository contains the code for the application developed for the tech interview assignment, developed by Francesco Servidio.
 
 ## Important
 Make sure that a valid token is specified inside the file ``src/main/application.properties``
@@ -67,4 +67,4 @@ API specifications available [here](./docs/api.md).
 ### To do
 - Cover unhappy paths in tests
 - Harmonise response entity in a structured json format
-- 
+- Harmonise endpoint names
