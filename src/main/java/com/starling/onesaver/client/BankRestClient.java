@@ -39,7 +39,7 @@ public class BankRestClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(typeReference)
-                .onErrorMap(Exception.class, ex -> new Exception("Generic exception", ex))
+//                .onErrorMap(Exception.class, ex -> new Exception("Generic exception", ex))
                 .block();
     }
 
@@ -61,7 +61,6 @@ public class BankRestClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(typeReference)
-                .onErrorMap(Exception.class, ex -> new Exception("Generic exception", ex))
                 .block();
     }
 }
