@@ -25,7 +25,6 @@ You can specify the token env. variable as follows:
 http://localhost:8080
 ```
 
-
 ## Folder structure
 
 ### Top-level directories
@@ -64,3 +63,8 @@ http://localhost:8080
             └── resources                       # Properties files. Store the access token here as specified above.
 
 API specifications available [here](./docs/api.md).
+
+### To do
+- Cover unhappy paths in tests
+- Harmonise response entity in a structured json format
+- 
