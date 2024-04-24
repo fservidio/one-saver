@@ -5,8 +5,11 @@ import com.starling.model.Accounts;
 import com.starling.model.BalanceV2;
 import com.starling.onesaver.client.BankRestClient;
 import com.starling.onesaver.client.ClientProperties;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,13 +20,10 @@ import java.util.Optional;
  */
 @Service
 public class AccountService {
-
-    private final BankRestClient bankRestClient;
     private final ClientProperties properties;
 
     public AccountService(ClientProperties properties) {
         this.properties = properties;
-        this.bankRestClient = new BankRestClient(properties.getBaseUrl());
     }
 
     /**
@@ -31,15 +31,28 @@ public class AccountService {
      * @return the object containing the details of the primary account
      */
     public AccountV2 getAccount() {
+
         ClientProperties.ClientParams clientParams = properties.getParams().get("accounts");
+        Accounts accounts = WebClient.builder().baseUrl(properties.getBaseUrl()).build()
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(clientParams.getUrlPath()) //Base-path for invoking the 3rd party service.
+                        .build())
+                .headers(h -> {
+                            h.setBearerAuth(properties.getToken());
+                            h.setAccept(List.of(MediaType.APPLICATION_JSON));
+                            h.setContentType(MediaType.APPLICATION_JSON);
+                        }
+                )
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(Accounts.class)
+                .block();
 
-        Accounts accounts = bankRestClient.retrieveObjects(
-                properties.getToken(),
-                clientParams.getUrlPath(),
-                null,
-                new HashMap<>(),
-                ParameterizedTypeReference.forType(Accounts.class));
+        return getPrimaryAccount(accounts);
+    }
 
+    private AccountV2 getPrimaryAccount(Accounts accounts) {
         assert accounts.getAccounts() != null;
         List<AccountV2> primaryAccounts = accounts.getAccounts().stream()
                 .filter(a -> {
@@ -64,6 +77,7 @@ public class AccountService {
      * @return the cleared balance in minor units of the primary account
      */
     public Long getAccountBalance() {
+
         // get the account id and the category id
         AccountV2 account = getAccount();
         assert(account!=null);
@@ -71,15 +85,27 @@ public class AccountService {
         assert account.getAccountUid() != null;
         properties.getParams().get("account-balance").pathParams.put("accountUid", account.getAccountUid().toString());
         ClientProperties.ClientParams clientParams = properties.getParams().get("account-balance");
-        BalanceV2 accounts = bankRestClient.retrieveObjects(
-                properties.getToken(),
-                clientParams.getUrlPath(),
-                null,
-                clientParams.getPathParams(),
-                ParameterizedTypeReference.forType(BalanceV2.class));
-        assert(accounts!=null);
 
-        assert accounts.getClearedBalance() != null;
-        return accounts.getClearedBalance().getMinorUnits();
+
+        BalanceV2 balance = WebClient.builder().baseUrl(properties.getBaseUrl()).build()
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(clientParams.getUrlPath())
+                        .build(clientParams.getPathParams()))
+
+                .headers(h -> {
+                            h.setBearerAuth(properties.getToken());
+                            h.setAccept(List.of(MediaType.APPLICATION_JSON));
+                            h.setContentType(MediaType.APPLICATION_JSON);
+                        }
+                )
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(BalanceV2.class)
+                .block();
+
+        assert(balance!=null);
+        assert balance.getClearedBalance() != null;
+        return balance.getClearedBalance().getMinorUnits();
     }
 }
